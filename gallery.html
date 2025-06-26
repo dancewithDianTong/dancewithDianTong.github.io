@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Gallery</title>
+    <style>
+        .gallery {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+        }
+        .gallery img {
+            max-width: 100%;
+            height: auto;
+            width: 300px; /* Adjust size as needed */
+            object-fit: contain; /* Ensures images scale without cropping */
+        }   
+    </style>
+</head>
+<body>
+    <h1>Gallery</h1>
+    <div class="gallery">
+        <img src="image/IMG_0642.JPG" alt="Image 0649">
+        <img src="image/new_year_red_dust.jpg" alt="Image 0642">
+        <img src="image/IMG_0645 2.JPG" alt="Image 1267">
+        <img src="image/IMG_1447.PNG" alt="Image 1447">
+        <img src="image/IMG_1267.PNG" alt="Image 1268">
+        <img src="image/desert.jpeg" alt="desert">
+    </div>
+</body>
+</html>
