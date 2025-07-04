@@ -4,22 +4,46 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Diantong Li</title>
+    <style>
+        .intro-container {
+            display: flex;
+            align-items: flex-start;
+            gap: 20px; /* Space between image and text */
+            margin-bottom: 20px; /* Space below the container */
+        }
+        .intro-container img {
+            max-width: 200px;
+            border-radius: 50%;
+        }
+        .intro-text {
+            flex: 1; /* Takes remaining space */
+        }
+        .comboo-img {
+            max-width: 60vw; /* Matches content width (100% - 20% left - 20% right) */
+            height: auto; /* Maintains aspect ratio */
+            display: block; /* Ensures proper alignment */
+        }
+    </style>
 </head>
 <body style="margin: 20%;">
     <h1>Diantong (点通) Li</h1>
-    <img src="image/profile_page.jpg" alt="Diantong Li Profile" style="max-width: 200px; border-radius: 50%;">
-    <p><a href="CV_0702.pdf">CV</a></p>
-    <p>Welcome!, I am Diantong, a senior undergraduate student at <a href="https://cuhk.edu.cn/">The Chinese University of Hong Kong, Shenzhen</a>.</p>
-    <ul>
-        <li>I major in Statistics.</li>
-        <li>I enjoy creating things: I <a href="gallery.html">draw</a>. I write short stories.</li>
-    </ul>
+    <div class="intro-container">
+        <img src="image/profile_page.JPG" alt="Diantong Li Profile">
+        <div class="intro-text">
+            <p>Welcome!, I am Diantong, a senior undergraduate student at <a href="https://cuhk.edu.cn/">The Chinese University of Hong Kong, Shenzhen</a>.</p>
+            <ul>
+                <li>I major in Statistics.</li>
+                <li>I enjoy creating things: I <a href="gallery.html">draw</a>. I write short stories.</li>
+                <li> <a href="CV_0702.pdf">CV</a> </li>
+            </ul>
+        </div>
+    </div>
     <h2>Research Interest</h2>
     <p>My research focuses on data-driven decision-making and probabilistic reasoning in machine learning and deep learning. My first project was to develop a constrained multi-objective Bayesian optimization algorithm. Currently, I am exploring knowledge transfer in Bayesian optimization through pre-training and fine-tuning neural networks.</p>
     <h2>Publications</h2>
     <ul>
         <li><strong>Diantong Li</strong>, Fengxue Zhang, Chong Liu, Yuxin Chen; Constrained Multi-objective Bayesian Optimization through Optimistic Constraints Estimation; <em>International Conference on Artificial Intelligence and Statistics (AISTATS)</em>, May 2025. <a href="https://arxiv.org/pdf/2411.03641">paper</a></li>
     </ul>
-    <img src="image/comboo.png" alt="COMBOO">
+    <img src="image/comboo.png" alt="COMBOO" class="comboo-img">
 </body>
 </html>
