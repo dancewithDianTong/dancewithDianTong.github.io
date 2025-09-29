@@ -19,7 +19,7 @@
         .intro-text {
             flex: 1; /* Takes remaining space */
         }
-        .comboo-img {
+        .project-img {
             max-width: 60vw; /* Matches content width (100% - 20% left - 20% right) */
             height: auto; /* Maintains aspect ratio */
             display: block; /* Ensures proper alignment */
@@ -41,7 +41,12 @@
 <body style="margin: 20%;">
     <h1>Diantong (点通) Li</h1>
     <div class="intro-container">
-        <img src="image/profile_page.JPG" alt="Diantong Li Profile">
+        <div>
+            <img src="image/profile_page.JPG" alt="Diantong Li Profile">
+            <div style="text-align: center; margin-top: 8px; font-style: italic; color: #515198;">
+                Photo taken by JIANING
+            </div>
+        </div>
         <div class="intro-text">
             <p>Welcome! I am Diantong, a senior undergraduate student at <a href="https://cuhk.edu.cn/">The Chinese University of Hong Kong, Shenzhen</a>.</p>
             <ul>
@@ -54,11 +59,17 @@
         </div>
     </div>
     <h2>Research Interest</h2>
-    <p>My research focuses on data-driven decision-making, probabilistic reasoning of machine learning, and deep learning. My first project was to develop a constrained multi-objective Bayesian optimization algorithm. Currently, I am exploring knowledge transfer in Bayesian optimization through pre-training and fine-tuning neural networks.</p>
-    <h2>Publications</h2>
+    <p>My research focuses on data-driven decision-making under uncertainty (e.g. Bayesian Optimization), especially how we can apply them in many realworld problems such as drug discovery (e.g. for penicillin, Covid, Cancer) or provide theoretical guarantees for their performance.
+        I love the research that is motivated by statistical intuition and be generalized and made scalable by modern machine learning techniques, such as few-shot Bayesian optimization facilitated by knowledge transfer using MDP-prior-fitted neural networks. 
+    </p>
+    <h2>Research Projects</h2>
     <ul>
         <li><strong>Diantong Li</strong>, Fengxue Zhang, Chong Liu, Yuxin Chen; Constrained Multi-objective Bayesian Optimization through Optimistic Constraints Estimation; <em>International Conference on Artificial Intelligence and Statistics (AISTATS)</em>, May 2025. <a href="https://arxiv.org/pdf/2411.03641">paper</a></li>
     </ul>
-    <img src="image/comboo.png" alt="COMBOO" class="comboo-img">
+    <img src="image/comboo.png" alt="COMBOO" class="project-img">
+    <ul>
+        <li><strong>Procedure-informed Bayesian Optimization</strong></em></li>
+    </ul>
+    <img src="image/procedure.png" alt="PROCEDURE" class="project-img">
 </body>
 </html>
