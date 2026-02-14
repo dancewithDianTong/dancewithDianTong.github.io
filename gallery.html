@@ -3,96 +3,106 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image Gallery | Diantong Li</title>
+    <title>Visual Art Gallery | Diantong Li</title>
     <style>
         ::selection { background-color: #94b1ff; color: #ffffff; }
 
         body {
             margin: 0;
-            padding: 40px;
+            padding: 80px 40px;
             font-family: sans-serif;
             background-color: #ffffff;
             text-align: center;
+            overflow-x: hidden;
         }
 
+        h1 { font-weight: 300; margin-bottom: 80px; letter-spacing: 4px; }
+
+        /* ===== THE CHAOTIC CONTAINER ===== */
         .gallery {
-            column-count: 3; 
-            column-gap: 40px;
-            max-width: 1200px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 60px 40px;
+            max-width: 1400px;
             margin: 0 auto;
         }
 
-        @media (max-width: 900px) { .gallery { column-count: 2; } }
-        @media (max-width: 600px) { .gallery { column-count: 1; } }
-
+        /* ===== BASE FRAME STRUCTURE ===== */
         .frame-wrapper {
-            break-inside: avoid; 
             display: inline-block;
-            margin-bottom: 40px;
-            line-height: 0;
             position: relative;
-            /* Frame Thickness - Keep this consistent across padding, size, and clip-path */
-            padding: 25px; 
+            padding: 20px; /* Adjust thickness here */
             background: #fff;
+            line-height: 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, z-index 0.3s;
+            z-index: 1;
         }
 
-        /* THE 8-TEXTURE ENGINE */
+        /* Hover effect: focus on the image */
+        .frame-wrapper:hover {
+            transform: scale(1.08) rotate(0deg) !important;
+            z-index: 10;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+        }
+
+        /* The 8-texture mapping logic */
         .frame-wrapper::before {
             content: "";
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
             z-index: 1;
             pointer-events: none;
-
-            /* 1. LAYERED BACKGROUNDS: Corners must come before sides in the list */
-            background-image: 
-                url("image/corner-tl.png"), 
-                url("image/corner-tr.png"), 
-                url("image/corner-bl.png"), 
-                url("image/corner-br.png"),
-                url("image/texture-top.png"), 
-                url("image/texture-bottom.png"), 
-                url("image/texture-left.png"), 
-                url("image/texture-right.png");
-
-            /* 2. SPECIFIC POSITIONS */
             background-position: 
-                top left, top right, bottom left, bottom right, /* Corners */
-                top center, bottom center, left center, right center; /* Sides */
-
-            /* 3. REPEAT LOGIC: corners 'no-repeat', sides 'repeat' along axis */
-            background-repeat: 
-                no-repeat, no-repeat, no-repeat, no-repeat, 
-                repeat-x, repeat-x, repeat-y, repeat-y;
-
-            /* 4. EXACT SIZING */
-            background-size: 
-                25px 25px, 25px 25px, 25px 25px, 25px 25px, /* Corners fixed at 25x25 */
-                auto 25px, auto 25px, 25px auto, 25px auto; /* Sides scale to match thickness */
-
-            /* 5. MITER CLIP: Ensures textures don't overlap inside the image area */
-            clip-path: polygon(
-                0 0, 100% 0, 100% 100%, 0 100%, 0 0, 
-                25px 25px, 25px calc(100% - 25px), calc(100% - 25px) calc(100% - 25px), calc(100% - 25px) 25px, 25px 25px
-            );
+                top left, top right, bottom left, bottom right,
+                top center, bottom center, left center, right center;
+            background-repeat: no-repeat, no-repeat, no-repeat, no-repeat, repeat-x, repeat-x, repeat-y, repeat-y;
+            background-size: 20px 20px, 20px 20px, 20px 20px, 20px 20px, auto 20px, auto 20px, 20px auto, 20px auto;
+            clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 0 0, 20px 20px, 20px calc(100% - 20px), calc(100% - 20px) calc(100% - 20px), calc(100% - 20px) 20px, 20px 20px);
         }
 
+        /* ===== TEXTURE STYLE 1 (Folder 1) ===== */
+        .style-1::before {
+            background-image: 
+                url("image/frame_1/corner-tl.png"), url("image/frame_1/corner-tr.png"), 
+                url("image/frame_1/corner-bl.png"), url("image/frame_1/corner-br.png"),
+                url("image/frame_1/texture-top.png"), url("image/frame_1/texture-bottom.png"), 
+                url("image/frame_1/texture-left.png"), url("image/frame_1/texture-right.png");
+        }
+
+        /* ===== TEXTURE STYLE 2 (Folder 2) ===== */
+        .style-2::before {
+            background-image: 
+                url("image/frame_2/corner-tl.png"), url("image/frame_2/corner-tr.png"), 
+                url("image/frame_2/corner-bl.png"), url("image/frame_2/corner-br.png"),
+                url("image/frame_2/texture-top.png"), url("image/frame_2/texture-bottom.png"), 
+                url("image/frame_2/texture-left.png"), url("image/frame_2/texture-right.png");
+        }
+        /* ===== TEXTURE STYLE 3 (Folder 3) ===== */
+        .style-3::before {
+            background-image: 
+                url("image/frame_3/corner-tl.png"), url("image/frame_3/corner-tr.png"), 
+                url("image/frame_3/corner-bl.png"), url("image/frame_3/corner-br.png"),
+                url("image/frame_3/texture-top.png"), url("image/frame_3/texture-bottom.png"), 
+                url("image/frame_3/texture-left.png"), url("image/frame_3/texture-right.png");
+        }
+
+
         .frame-wrapper img {
-            width: 100%;
             height: auto;
             display: block;
             position: relative;
             z-index: 0;
         }
-
-        h1 { font-weight: 300; margin-bottom: 50px; }
     </style>
 </head>
 <body>
 
-    <h1>Diantong's Art Works</h1>
+    <h1>Diantong's Art Gallery</h1>
 
-    <div class="gallery">
+    <div class="gallery" id="gallery">
         <div class="frame-wrapper"><img src="image/IMG_0642.JPG"></div>
         <div class="frame-wrapper"><img src="image/new_year_red_dust.jpg"></div>
         <div class="frame-wrapper"><img src="image/IMG_0645 2.JPG"></div>
@@ -108,5 +118,28 @@
         <div class="frame-wrapper"><img src="image/heli.png"></div>
     </div>
 
+    <script>
+        // Apply randomization on load
+        const frames = document.querySelectorAll('.frame-wrapper');
+
+        frames.forEach(frame => {
+            // 1. Randomly assign Style 1, 2, or 3
+            const styleNum = Math.floor(Math.random() * 3) + 1; // Generates 1, 2, or 3
+            frame.classList.add(`style-${styleNum}`);
+
+            // 2. Randomize Rotation (-4 to 4 degrees)
+            const rotation = (Math.random() * 8 - 4).toFixed(2);
+            
+            // 3. Randomize Vertical Jitter (-25px to 25px)
+            const verticalShift = (Math.random() * 50 - 25).toFixed(2);
+            
+            // 4. Randomize Width (between 250px and 450px)
+            const randomWidth = Math.floor(Math.random() * 200) + 250;
+
+            // Apply styles
+            // frame.style.transform = `rotate(${rotation}deg) translateY(${verticalShift}px)`;
+            frame.querySelector('img').style.width = `${randomWidth}px`;
+        });
+    </script>
 </body>
 </html>
