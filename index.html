@@ -3,19 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Diantong Li's personal page</title>
+    <title>Diantong Li</title>
 
     <style>
+        /* ===== 1. Highlighting Configuration ===== */
+        /* This changes the background and font color when text is selected */
+        ::selection {
+            background-color: #94b1ff; /* Highlight background color */
+            color: #ffffff;            /* Highlight font color */
+        }
+        /* Safari/Firefox Support */
+        ::-moz-selection {
+            background-color: #94b1ff;
+            color: #ffffff;
+        }
+
+        /* ===== 2. General Styles ===== */
         body {
-            margin: 10;
-            font-family: sans-serif;
+            margin: 0; /* Changed to 0 to prevent white gaps at edges */
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
         }
 
         /* ===== Top hero section ===== */
         .hero {
             position: relative;
             height: 55vh;
-            background-image: url("image/IMG_1447.PNG"); /* CHANGE THIS */
+            background-image: url("image/IMG_1447.PNG"); 
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
@@ -38,8 +54,9 @@
 
         /* ===== Page content ===== */
         .content {
-            margin: 20%;
-            margin-top: 0vh; /* pulls content slightly into hero */
+            max-width: 900px;         /* Prevents text from stretching too wide */
+            margin: -5vh auto 50px auto; /* Centers content and pulls it up into hero */
+            padding: 0 20px;          /* Side padding for mobile */
             position: relative;
             background: white;
         }
@@ -47,48 +64,70 @@
         .intro-container {
             display: flex;
             align-items: flex-start;
-            gap: 20px;
-            margin-bottom: 20px;
+            flex-wrap: wrap;          /* Allows stacking on small screens */
+            gap: 30px;
+            margin-bottom: 30px;
         }
 
         .intro-container img {
-            max-width: 200px;
+            width: 180px;
+            height: 180px;
+            object-fit: cover;
             border-radius: 50%;
-            height: auto;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
 
         .intro-text {
             flex: 1;
+            min-width: 300px;
         }
 
         .project-img {
-            max-width: 60vw;
+            max-width: 100%;          /* Responsive images */
             height: auto;
             display: block;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         }
 
         h1 {
             text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 10px;
+            margin-top: 40px;
         }
 
         a {
             text-decoration: none;
             color: #94b1ff;
             font-style: italic;
+            transition: color 0.3s ease;
         }
 
         a:hover {
             color: #515198;
+        }
+
+        ul {
+            padding-left: 20px;
+        }
+
+        li {
+            margin-bottom: 10px;
         }
     </style>
 </head>
 
 <body>
 
-    <!-- Top background image -->
     <div class="hero"></div>
 
-    <!-- Main content -->
     <div class="content">
         <h1>Diantong (点通) Li</h1>
 
@@ -103,20 +142,18 @@
                     <a href="https://cuhk.edu.cn/">The Chinese University of Hong Kong, Shenzhen</a>.
                 </p>
                 <ul>
-                    <li>I major in Statistics.</li>
+                    <li>I major in <strong>Statistics</strong>.</li>
                     <li>I enjoy creating things: <a href="gallery.html">Visual Art</a></li>
-                    <li><a href="CV_academia.pdf">CV</a></li>
-                    <!-- <li style="color: red;">I am actively looking for PhD opportunities in 26Fall in STATS/CS!</li>
-                    <li>diantongli@link.cuhk.edu.cn</li> -->
+                    <li><a href="CV_academia.pdf">View my CV</a></li>
                 </ul>
             </div>
         </div>
 
         <h2>Research Interest</h2>
         <p>
-            My research focuses on data-driven decision-making under uncertainty (e.g. Bayesian Optimization),
+            My research focuses on data-driven decision-making under uncertainty (e.g., Bayesian Optimization),
             especially how we can apply them in many real-world problems such as drug discovery
-            (e.g. penicillin, Covid, Cancer) or provide theoretical guarantees for their performance.
+            (e.g., penicillin, Covid, Cancer) or provide theoretical guarantees for their performance.
         </p>
 
         <h2>Research Projects</h2>
