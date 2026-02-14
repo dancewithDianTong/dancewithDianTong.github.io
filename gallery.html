@@ -3,39 +3,110 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image Gallery</title>
+    <title>Image Gallery | Diantong Li</title>
     <style>
-        .gallery {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            justify-content: center;
+        ::selection { background-color: #94b1ff; color: #ffffff; }
+
+        body {
+            margin: 0;
+            padding: 40px;
+            font-family: sans-serif;
+            background-color: #ffffff;
+            text-align: center;
         }
-        .gallery img {
-            max-width: 100%;
+
+        .gallery {
+            column-count: 3; 
+            column-gap: 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        @media (max-width: 900px) { .gallery { column-count: 2; } }
+        @media (max-width: 600px) { .gallery { column-count: 1; } }
+
+        .frame-wrapper {
+            break-inside: avoid; 
+            display: inline-block;
+            margin-bottom: 40px;
+            line-height: 0;
+            position: relative;
+            /* Frame Thickness - Keep this consistent across padding, size, and clip-path */
+            padding: 25px; 
+            background: #fff;
+        }
+
+        /* THE 8-TEXTURE ENGINE */
+        .frame-wrapper::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            z-index: 1;
+            pointer-events: none;
+
+            /* 1. LAYERED BACKGROUNDS: Corners must come before sides in the list */
+            background-image: 
+                url("image/corner-tl.png"), 
+                url("image/corner-tr.png"), 
+                url("image/corner-bl.png"), 
+                url("image/corner-br.png"),
+                url("image/texture-top.png"), 
+                url("image/texture-bottom.png"), 
+                url("image/texture-left.png"), 
+                url("image/texture-right.png");
+
+            /* 2. SPECIFIC POSITIONS */
+            background-position: 
+                top left, top right, bottom left, bottom right, /* Corners */
+                top center, bottom center, left center, right center; /* Sides */
+
+            /* 3. REPEAT LOGIC: corners 'no-repeat', sides 'repeat' along axis */
+            background-repeat: 
+                no-repeat, no-repeat, no-repeat, no-repeat, 
+                repeat-x, repeat-x, repeat-y, repeat-y;
+
+            /* 4. EXACT SIZING */
+            background-size: 
+                25px 25px, 25px 25px, 25px 25px, 25px 25px, /* Corners fixed at 25x25 */
+                auto 25px, auto 25px, 25px auto, 25px auto; /* Sides scale to match thickness */
+
+            /* 5. MITER CLIP: Ensures textures don't overlap inside the image area */
+            clip-path: polygon(
+                0 0, 100% 0, 100% 100%, 0 100%, 0 0, 
+                25px 25px, 25px calc(100% - 25px), calc(100% - 25px) calc(100% - 25px), calc(100% - 25px) 25px, 25px 25px
+            );
+        }
+
+        .frame-wrapper img {
+            width: 100%;
             height: auto;
-            width: 300px; /* Adjust size as needed */
-            object-fit: contain; /* Ensures images scale without cropping */
-        }   
+            display: block;
+            position: relative;
+            z-index: 0;
+        }
+
+        h1 { font-weight: 300; margin-bottom: 50px; }
     </style>
 </head>
 <body>
-    <h1>Gallery</h1>
-    <div class="gallery">
-        <img src="image/IMG_0642.JPG" alt="Image 0649">
-        <img src="image/new_year_red_dust.jpg" alt="Image 0642">
-        <img src="image/IMG_0645 2.JPG" alt="Image 1267">
-        <img src="image/IMG_1447.PNG" alt="Image 1447">
-        <img src="image/IMG_1267.PNG" alt="Image 1268">
-        <img src="image/desert.jpeg" alt="desert">
-        <img src="image/plassculp.png" alt="sculpture">
-        <img src="image/plastorst.png" alt="forest">
-        <img src="image/football.jpg" alt="football">
-        <img src="image/playground.PNG" alt="playground">
-        <img src="image/dance_hall.PNG" alt="dance hall">
-        <img src="image/bathroom.png" alt="bathroom">
-        <img src="image/heli.png" alt="helicopter">
 
+    <h1>Diantong's Art Works</h1>
+
+    <div class="gallery">
+        <div class="frame-wrapper"><img src="image/IMG_0642.JPG"></div>
+        <div class="frame-wrapper"><img src="image/new_year_red_dust.jpg"></div>
+        <div class="frame-wrapper"><img src="image/IMG_0645 2.JPG"></div>
+        <div class="frame-wrapper"><img src="image/IMG_1447.PNG"></div>
+        <div class="frame-wrapper"><img src="image/IMG_1267.PNG"></div>
+        <div class="frame-wrapper"><img src="image/desert.jpeg"></div>
+        <div class="frame-wrapper"><img src="image/plassculp.png"></div>
+        <div class="frame-wrapper"><img src="image/plastorst.png"></div>
+        <div class="frame-wrapper"><img src="image/football.jpg"></div>
+        <div class="frame-wrapper"><img src="image/playground.PNG"></div>
+        <div class="frame-wrapper"><img src="image/dance_hall.PNG"></div>
+        <div class="frame-wrapper"><img src="image/bathroom.png"></div>
+        <div class="frame-wrapper"><img src="image/heli.png"></div>
     </div>
+
 </body>
 </html>
