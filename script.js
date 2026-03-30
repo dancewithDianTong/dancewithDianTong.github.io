@@ -59,7 +59,8 @@ function layoutText() {
       })
 
       // advance cursor (approximate width)
-      x += ctx.measureText(ch).width
+      const spacing = 1.2
+      x += ctx.measureText(ch).width * spacing
     }
   })
 }
