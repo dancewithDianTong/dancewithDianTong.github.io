@@ -59,7 +59,7 @@ function layoutText() {
       })
 
       // advance cursor (approximate width)
-      const spacing = 2.0
+      const spacing = 3.0
       x += ctx.measureText(ch).width * spacing
     }
   })
