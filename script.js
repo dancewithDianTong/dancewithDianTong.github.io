@@ -1,91 +1,148 @@
-// ===== Canvas setup =====
-const canvas = document.getElementById("c")
-const ctx = canvas.getContext("2d")
+// ===== Import Pretext =====
+import { prepareWithSegments, layoutWithLines } from 'https://esm.sh/@chenglou/pretext'
 
-function resizeCanvas() {
-  canvas.width = window.innerWidth
-  canvas.height = window.innerHeight
+// ===== Canvas =====
+const canvas = document.getElementById('c')
+const ctx = canvas.getContext('2d')
+const dpr = Math.min(window.devicePixelRatio || 1, 2)
+
+let W, H
+
+// ===== TEXT =====
+const TEXT = `Welcome! I am Diantong, a senior undergraduate student. 
+My research focuses on data-driven decision-making under uncertainty, 
+especially Bayesian Optimization and its real-world applications.`
+
+// ===== SETTINGS =====
+const FONT = '16px Georgia, serif'
+const LINE_HEIGHT = 22
+
+let chars = []
+let dots = []
+
+const DOT_COLORS = ['#9b59b6','#e67e22','#1abc9c','#e74c3c','#3498db','#2ecc71']
+let colorIdx = 0
+
+// ===== Resize =====
+function resize() {
+  W = window.innerWidth
+  H = window.innerHeight
+
+  canvas.width = W * dpr
+  canvas.height = H * dpr
+
+  layoutText()
 }
-resizeCanvas()
-window.addEventListener("resize", resizeCanvas)
 
-// ===== Capture page as image =====
-let pageImage = null
+// ===== Layout using Pretext =====
+function layoutText() {
+  const prepared = prepareWithSegments(TEXT, FONT)
+  const { lines } = layoutWithLines(prepared, W - 40, LINE_HEIGHT)
 
-async function capturePage() {
-  const tempCanvas = await html2canvas(document.body)
-  pageImage = tempCanvas
-}
+  chars = []
 
-capturePage()
+  lines.forEach((line, lineIndex) => {
+    let x = 20
+    let y = 40 + lineIndex * LINE_HEIGHT
 
-// ===== Ripple state =====
-let ripples = []
+    for (let i = 0; i < line.text.length; i++) {
+      const ch = line.text[i]
 
-canvas.addEventListener("click", (e) => {
-  ripples.push({
-    x: e.clientX,
-    y: e.clientY,
-    radius: 0,
-    life: 0
+      chars.push({
+        ch,
+        baseX: x,
+        baseY: y,
+        x,
+        y,
+        dx: 0,
+        dy: 0
+      })
+
+      // advance cursor (approximate width)
+      x += ctx.measureText(ch).width
+    }
   })
+}
+
+// ===== Interaction =====
+function addDot(x, y) {
+  dots.push({
+    x,
+    y,
+    color: DOT_COLORS[colorIdx % DOT_COLORS.length],
+    time: 0,
+    radius: 0
+  })
+  colorIdx++
+}
+
+canvas.addEventListener('pointerdown', e => {
+  addDot(e.clientX, e.clientY)
+})
+
+canvas.addEventListener('pointermove', e => {
+  if (e.buttons > 0 && Math.random() < 0.08) {
+    addDot(e.clientX, e.clientY)
+  }
 })
 
 // ===== Animation =====
-function animate() {
-  if (!pageImage) {
-    requestAnimationFrame(animate)
-    return
+function frame() {
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+  ctx.clearRect(0, 0, W, H)
+
+  ctx.fillStyle = '#f5f2ed'
+  ctx.fillRect(0, 0, W, H)
+
+  // update dots
+  for (const dot of dots) {
+    dot.time += 0.016
+    dot.radius = dot.time * 120
   }
 
-  ctx.clearRect(0, 0, canvas.width, canvas.height)
+  dots = dots.filter(d => d.time < 6)
 
-  // draw base image
-  ctx.drawImage(pageImage, 0, 0)
+  // compute ripple
+  for (const c of chars) {
+    c.dx = 0
+    c.dy = 0
 
-  // get pixels
-  let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
-  let data = imageData.data
+    for (const dot of dots) {
+      const dx = c.baseX - dot.x
+      const dy = c.baseY - dot.y
+      const dist = Math.sqrt(dx * dx + dy * dy)
 
-  // apply ripple distortion
-  ripples.forEach(r => {
-    r.radius += 3
-    r.life += 1
+      const rippleWidth = 60
+      const diff = Math.abs(dist - dot.radius)
 
-    for (let y = 0; y < canvas.height; y += 2) {
-      for (let x = 0; x < canvas.width; x += 2) {
+      if (diff < rippleWidth) {
+        const wave = Math.cos((diff / rippleWidth) * Math.PI * 0.5)
+        const strength = wave * 30
 
-        const dx = x - r.x
-        const dy = y - r.y
-        const dist = Math.sqrt(dx * dx + dy * dy)
-
-        const diff = dist - r.radius
-
-        if (Math.abs(diff) < 20) {
-          const offset = Math.sin(diff * 0.3) * 3
-
-          const sx = Math.floor(x + dx / dist * offset)
-          const sy = Math.floor(y + dy / dist * offset)
-
-          if (sx >= 0 && sy >= 0 && sx < canvas.width && sy < canvas.height) {
-            const i = (y * canvas.width + x) * 4
-            const si = (sy * canvas.width + sx) * 4
-
-            data[i] = data[si]
-            data[i + 1] = data[si + 1]
-            data[i + 2] = data[si + 2]
-          }
+        if (dist > 1) {
+          c.dx += (dx / dist) * strength
+          c.dy += (dy / dist) * strength
         }
       }
     }
-  })
 
-  // clean old ripples
-  ripples = ripples.filter(r => r.life < 80)
+    c.x = c.baseX + c.dx
+    c.y = c.baseY + c.dy
+  }
 
-  ctx.putImageData(imageData, 0, 0)
+  // draw text
+  ctx.font = FONT
+  ctx.textBaseline = 'top'
 
-  requestAnimationFrame(animate)
+  for (const c of chars) {
+    ctx.fillStyle = '#333'
+    ctx.fillText(c.ch, c.x, c.y)
+  }
+
+  requestAnimationFrame(frame)
 }
 
-animate()
+// ===== Init =====
+window.addEventListener('resize', resize)
+resize()
+requestAnimationFrame(frame)
