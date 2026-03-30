@@ -1,6 +1,3 @@
-// ===== Import Pretext from CDN =====
-import { prepareWithSegments, layoutWithLines } from 'https://esm.sh/@chenglou/pretext'
-
 // ===== Canvas setup =====
 const canvas = document.getElementById("c")
 const ctx = canvas.getContext("2d")
@@ -12,76 +9,83 @@ function resizeCanvas() {
 resizeCanvas()
 window.addEventListener("resize", resizeCanvas)
 
-// ===== Text setup (Pretext) =====
-const text = "Click anywhere on this page to create a ripple effect over this text."
-const prepared = prepareWithSegments(text, '20px Arial')
+// ===== Capture page as image =====
+let pageImage = null
 
-// layout width relative to screen
-let layoutWidth = Math.min(600, window.innerWidth - 40)
-let lineHeight = 28
+async function capturePage() {
+  const tempCanvas = await html2canvas(document.body)
+  pageImage = tempCanvas
+}
 
-let { lines } = layoutWithLines(prepared, layoutWidth, lineHeight)
-
-// recompute layout on resize
-window.addEventListener("resize", () => {
-  layoutWidth = Math.min(600, window.innerWidth - 40)
-  const result = layoutWithLines(prepared, layoutWidth, lineHeight)
-  lines = result.lines
-})
-
-// ===== Drawing settings =====
-ctx.font = "20px Arial"
-ctx.fillStyle = "#000"
+capturePage()
 
 // ===== Ripple state =====
 let ripples = []
 
 canvas.addEventListener("click", (e) => {
   ripples.push({
-    x: e.offsetX,
-    y: e.offsetY,
+    x: e.clientX,
+    y: e.clientY,
     radius: 0,
     life: 0
   })
 })
 
-// ===== Animation loop =====
+// ===== Animation =====
 function animate() {
+  if (!pageImage) {
+    requestAnimationFrame(animate)
+    return
+  }
+
   ctx.clearRect(0, 0, canvas.width, canvas.height)
 
-  // update ripples
+  // draw base image
+  ctx.drawImage(pageImage, 0, 0)
+
+  // get pixels
+  let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
+  let data = imageData.data
+
+  // apply ripple distortion
   ripples.forEach(r => {
     r.radius += 3
     r.life += 1
-  })
 
-  // remove old ripples
-  ripples = ripples.filter(r => r.life < 120)
+    for (let y = 0; y < canvas.height; y += 2) {
+      for (let x = 0; x < canvas.width; x += 2) {
 
-  // draw text with distortion
-  lines.forEach((line, i) => {
-    let baseX = 20
-    let baseY = 60 + i * lineHeight
+        const dx = x - r.x
+        const dy = y - r.y
+        const dist = Math.sqrt(dx * dx + dy * dy)
 
-    let offsetY = 0
+        const diff = dist - r.radius
 
-    ripples.forEach(r => {
-      const dx = baseX - r.x
-      const dy = baseY - r.y
-      const dist = Math.sqrt(dx * dx + dy * dy)
+        if (Math.abs(diff) < 20) {
+          const offset = Math.sin(diff * 0.3) * 3
 
-      const diff = dist - r.radius
+          const sx = Math.floor(x + dx / dist * offset)
+          const sy = Math.floor(y + dy / dist * offset)
 
-      if (Math.abs(diff) < 30) {
-        offsetY += Math.sin(diff * 0.2) * 6 * Math.exp(-Math.abs(diff) / 30)
+          if (sx >= 0 && sy >= 0 && sx < canvas.width && sy < canvas.height) {
+            const i = (y * canvas.width + x) * 4
+            const si = (sy * canvas.width + sx) * 4
+
+            data[i] = data[si]
+            data[i + 1] = data[si + 1]
+            data[i + 2] = data[si + 2]
+          }
+        }
       }
-    })
-
-    ctx.fillText(line.text, baseX, baseY + offsetY)
+    }
   })
+
+  // clean old ripples
+  ripples = ripples.filter(r => r.life < 80)
+
+  ctx.putImageData(imageData, 0, 0)
 
   requestAnimationFrame(animate)
 }
 
-// ===== Start animation =====
 animate()
