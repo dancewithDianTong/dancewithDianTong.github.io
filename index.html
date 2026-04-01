@@ -7,10 +7,12 @@
 
     <style>
         /* ===== 1. Highlighting Configuration ===== */
+        /* This changes the background and font color when text is selected */
         ::selection {
-            background-color: #94b1ff;
-            color: #ffffff;
+            background-color: #94b1ff; /* Highlight background color */
+            color: #ffffff;            /* Highlight font color */
         }
+        /* Safari/Firefox Support */
         ::-moz-selection {
             background-color: #94b1ff;
             color: #ffffff;
@@ -18,7 +20,7 @@
 
         /* ===== 2. General Styles ===== */
         body {
-            margin: 0;
+            margin: 0; /* Changed to 0 to prevent white gaps at edges */
             padding: 0;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             line-height: 1.6;
@@ -35,6 +37,7 @@
             background-repeat: no-repeat;
         }
 
+        /* Fade from image to page background */
         .hero::after {
             content: "";
             position: absolute;
@@ -51,9 +54,9 @@
 
         /* ===== Page content ===== */
         .content {
-            max-width: 900px;
-            margin: -5vh auto 50px auto;
-            padding: 0 20px;
+            max-width: 900px;         /* Prevents text from stretching too wide */
+            margin: -5vh auto 50px auto; /* Centers content and pulls it up into hero */
+            padding: 0 20px;          /* Side padding for mobile */
             position: relative;
             background: white;
         }
@@ -61,7 +64,7 @@
         .intro-container {
             display: flex;
             align-items: flex-start;
-            flex-wrap: wrap;
+            flex-wrap: wrap;          /* Allows stacking on small screens */
             gap: 30px;
             margin-bottom: 30px;
         }
@@ -71,6 +74,7 @@
             height: 180px;
             object-fit: cover;
             border-radius: 50%;
+            /* box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); */
         }
 
         .intro-text {
@@ -79,11 +83,12 @@
         }
 
         .project-img {
-            max-width: 100%;
+            max-width: 100%;          /* Responsive images */
             height: auto;
             display: block;
             margin: 20px 0;
             border-radius: 8px;
+            /* box-shadow: 0 2px 8px rgba(0,0,0,0.05); */
         }
 
         h1 {
@@ -115,17 +120,6 @@
 
         li {
             margin-bottom: 10px;
-        }
-
-        /* ===== Canvas overlay ===== */
-        #c {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            z-index: 9999;
-            pointer-events: auto;
         }
     </style>
 </head>
@@ -185,15 +179,6 @@
 
         <img src="image/procedure.png" alt="PROCEDURE" class="project-img">
     </div>
-
-    <!-- Canvas + Libraries -->
-    <canvas id="c"></canvas>
-
-    <!-- html2canvas (required for full-page capture) -->
-    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-
-    <!-- Your ripple logic -->
-    <script type="module" src="script.js"></script>
 
 </body>
 </html>
