@@ -14,6 +14,11 @@ canvas { border: 2px solid #94b1ff; display: block; }
 #next { border: 1px solid #2a3560; }
 #msg { position: absolute; font-size: 28px; font-weight: bold; color: #e8eeff; text-shadow: 0 0 16px #94b1ff; display: none; }
 #keys { margin-top: 20px; font-size: 11px; color: #3d4f80; line-height: 1.8; }
+#best-label { margin-top: 24px; font-size: 13px; color: #94b1ff; letter-spacing: 1px; margin-bottom: 6px; }
+#scoreboard { list-style: none; font-size: 11px; line-height: 2; }
+#scoreboard li { display: flex; justify-content: space-between; color: #7888b0; }
+#scoreboard li span.rank { color: #3d4f80; width: 14px; }
+#scoreboard li span.val { color: #c8d4ff; }
 </style>
 </head>
 <body>
@@ -25,6 +30,8 @@ canvas { border: 2px solid #94b1ff; display: block; }
   <div id="next-label">NEXT</div>
   <canvas id="next" width="80" height="80"></canvas>
   <div id="keys">← → move<br>↑ rotate<br>↓ soft drop<br>Space hard drop<br>P pause</div>
+  <div id="best-label">BEST</div>
+  <ol id="scoreboard"></ol>
 </div>
 <div id="msg"></div>
 
@@ -138,11 +145,30 @@ function draw() {
   }));
 }
 
+function saveScore() {
+  const entry = { score, level, lines };
+  const list = JSON.parse(localStorage.getItem('tetris_scores') || '[]');
+  list.push(entry);
+  list.sort((a, b) => b.score - a.score);
+  list.splice(5);
+  localStorage.setItem('tetris_scores', JSON.stringify(list));
+  renderScoreboard(list);
+}
+
+function renderScoreboard(list) {
+  if (!list) list = JSON.parse(localStorage.getItem('tetris_scores') || '[]');
+  const ol = document.getElementById('scoreboard');
+  ol.innerHTML = list.length
+    ? list.map((e, i) => `<li><span class="rank">${i+1}</span><span class="val">${e.score.toLocaleString()}</span><span>Lv${e.level}</span></li>`).join('')
+    : '<li style="color:#3d4f80">—</li>';
+}
+
 function gameOver() {
   over = true;
+  saveScore();
   const m = document.getElementById('msg');
   m.textContent = 'GAME OVER'; m.style.display = 'block';
-  setTimeout(() => { m.style.display = 'none'; startGame(); }, 2000);
+  setTimeout(() => { m.style.display = 'none'; startGame(); renderScoreboard(); }, 2000);
 }
 
 function startGame() {
@@ -207,6 +233,7 @@ document.addEventListener('keyup', e => {
   clearInterval(held[e.key + '_i']);
 });
 
+renderScoreboard();
 startGame();
 </script>
 </body>
