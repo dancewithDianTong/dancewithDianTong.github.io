@@ -214,5 +214,43 @@
         <img src="image/procedure.png" alt="PROCEDURE" class="project-img">
     </div>
 
+    <script>
+        // Scroll parallax for the 3D head: the head behaves like a fixed object
+        // in space, so as the page scrolls down (your eye moves down past it)
+        // you see it more from below; scrolling back up reverses that.
+        // Changes are applied as deltas, so any rotation from dragging is kept.
+        (function () {
+            const head = document.querySelector('.profile-3d');
+            if (!head) return;
+            const DEG_PER_PX = 0.06;   // how strongly scrolling tilts the view
+            const MIN_PHI = 30, MAX_PHI = 150; // keep away from straight above/below
+            // Angle at the very top of the page (matches camera-orbit in the HTML).
+            // Vertical angle = basePhi + scrollY * DEG_PER_PX, so it always
+            // returns to the same view when you scroll back to the same place.
+            let basePhi = 105;
+            let ticking = false;
+            const toDeg = (rad) => rad * 180 / Math.PI;
+
+            // When the visitor drags the head, keep their new angle: re-derive
+            // the base so the current view corresponds to the current scroll.
+            head.addEventListener('camera-change', (e) => {
+                if (e.detail && e.detail.source === 'user-interaction') {
+                    basePhi = toDeg(head.getCameraOrbit().phi) - window.scrollY * DEG_PER_PX;
+                }
+            });
+
+            function update() {
+                ticking = false;
+                if (typeof head.getCameraOrbit !== 'function') return;
+                const theta = head.getCameraOrbit().theta;
+                const phi = Math.min(MAX_PHI, Math.max(MIN_PHI, basePhi + window.scrollY * DEG_PER_PX));
+                head.cameraOrbit = `${theta}rad ${phi}deg auto`;
+            }
+
+            window.addEventListener('scroll', () => {
+                if (!ticking) { ticking = true; requestAnimationFrame(update); }
+            }, { passive: true });
+        })();
+    </script>
 </body>
 </html>
