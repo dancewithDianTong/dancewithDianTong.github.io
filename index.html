@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Diantong Li</title>
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js"></script>
 
     <style>
         /* ===== 1. Highlighting Configuration ===== */
@@ -77,6 +78,23 @@
             /* box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); */
         }
 
+        /* Interactive 3D head (drag to rotate) */
+        .profile-3d {
+            width: 220px;
+            height: 220px;
+            background: transparent;
+            cursor: grab;
+            --poster-color: transparent;
+        }
+        .profile-3d:active {
+            cursor: grabbing;
+        }
+        .profile-3d img[slot="poster"] {
+            width: 180px;
+            height: 180px;
+            margin: 20px;
+        }
+
         .intro-text {
             flex: 1;
             min-width: 300px;
@@ -133,7 +151,21 @@
 
         <div class="intro-container">
             <div>
-                <img src="image/profile_page_5.png" alt="Diantong Li Profile">
+                <model-viewer class="profile-3d"
+                    src="image/head.glb"
+                    poster="image/profile_page_5.png"
+                    alt="3D model of Diantong Li's head - drag to rotate"
+                    camera-controls
+                    disable-zoom
+                    disable-pan
+                    auto-rotate
+                    auto-rotate-delay="1500"
+                    rotation-per-second="20deg"
+                    interaction-prompt="none"
+                    shadow-intensity="0"
+                    exposure="1">
+                    <img slot="poster" src="image/profile_page_5.png" alt="Diantong Li Profile">
+                </model-viewer>
             </div>
 
             <div class="intro-text">
