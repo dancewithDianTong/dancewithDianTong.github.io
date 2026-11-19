@@ -78,16 +78,12 @@
             /* box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); */
         }
 
-        /* Interactive 3D head (drag to rotate) */
+        /* 3D head that turns to face the mouse */
         .profile-3d {
             width: 220px;
             height: 220px;
             background: transparent;
-            cursor: grab;
             --poster-color: transparent;
-        }
-        .profile-3d:active {
-            cursor: grabbing;
         }
         .profile-3d img[slot="poster"] {
             width: 180px;
@@ -154,14 +150,9 @@
                 <model-viewer class="profile-3d"
                     src="image/head.glb"
                     poster="image/profile_page_5.png"
-                    alt="3D model of Diantong Li's head - drag to rotate"
+                    alt="3D model of Diantong Li's head"
                     camera-orbit="-20deg 105deg auto"
-                    camera-controls
-                    disable-zoom
-                    disable-pan
-                    auto-rotate
-                    auto-rotate-delay="1500"
-                    rotation-per-second="20deg"
+                    interpolation-decay="120"
                     interaction-prompt="none"
                     shadow-intensity="0"
                     exposure="1">
@@ -215,41 +206,43 @@
     </div>
 
     <script>
-        // Scroll parallax for the 3D head: the head behaves like a fixed object
-        // in space, so as the page scrolls down (your eye moves down past it)
-        // you see it more from below; scrolling back up reverses that.
-        // Changes are applied as deltas, so any rotation from dragging is kept.
+        // Make the 3D head turn to face the mouse pointer.
+        // We move the camera to the opposite side, which on screen looks like
+        // the head turning toward the cursor. Drag and auto-rotate are off.
         (function () {
             const head = document.querySelector('.profile-3d');
             if (!head) return;
-            const DEG_PER_PX = 0.06;   // how strongly scrolling tilts the view
-            const MIN_PHI = 30, MAX_PHI = 150; // keep away from straight above/below
-            // Angle at the very top of the page (matches camera-orbit in the HTML).
-            // Vertical angle = basePhi + scrollY * DEG_PER_PX, so it always
-            // returns to the same view when you scroll back to the same place.
-            let basePhi = 105;
-            let ticking = false;
+            const DEPTH = 500;         // px; smaller = head turns more sharply
+            const MAX_YAW = 50;        // max left/right turn (deg)
+            const MAX_PITCH = 35;      // max up/down tilt (deg)
             const toDeg = (rad) => rad * 180 / Math.PI;
-
-            // When the visitor drags the head, keep their new angle: re-derive
-            // the base so the current view corresponds to the current scroll.
-            head.addEventListener('camera-change', (e) => {
-                if (e.detail && e.detail.source === 'user-interaction') {
-                    basePhi = toDeg(head.getCameraOrbit().phi) - window.scrollY * DEG_PER_PX;
-                }
-            });
+            const clamp = (v, m) => Math.max(-m, Math.min(m, v));
+            let mouse = null;          // last pointer position (viewport coords)
+            let ticking = false;
 
             function update() {
                 ticking = false;
-                if (typeof head.getCameraOrbit !== 'function') return;
-                const theta = head.getCameraOrbit().theta;
-                const phi = Math.min(MAX_PHI, Math.max(MIN_PHI, basePhi + window.scrollY * DEG_PER_PX));
-                head.cameraOrbit = `${theta}rad ${phi}deg auto`;
+                if (!mouse) return;
+                const r = head.getBoundingClientRect();
+                const dx = mouse.x - (r.left + r.width / 2);   // + = cursor to the right
+                const dy = (r.top + r.height * 0.4) - mouse.y; // + = cursor above (aim at face height)
+                const yaw = clamp(toDeg(Math.atan2(dx, DEPTH)), MAX_YAW);
+                const pitch = clamp(toDeg(Math.atan2(dy, DEPTH)), MAX_PITCH);
+                // Camera left (-theta) = head turns right; camera below (+phi) = head looks up.
+                head.cameraOrbit = `${-yaw}deg ${90 + pitch}deg auto`;
             }
 
-            window.addEventListener('scroll', () => {
+            function schedule() {
                 if (!ticking) { ticking = true; requestAnimationFrame(update); }
+            }
+
+            window.addEventListener('pointermove', (e) => {
+                if (e.pointerType !== 'mouse') return; // touch screens keep the default pose
+                mouse = { x: e.clientX, y: e.clientY };
+                schedule();
             }, { passive: true });
+            // The head moves on screen when the page scrolls, so re-aim then too.
+            window.addEventListener('scroll', schedule, { passive: true });
         })();
     </script>
 </body>
